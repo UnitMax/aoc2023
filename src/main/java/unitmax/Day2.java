@@ -9,6 +9,12 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.IOUtils;
 
 public class Day2 {
+    public static class Balls {
+        public int blue = 0;
+        public int red = 0;
+        public int green = 0;
+    }
+
     public static String readResource(String filename) throws IOException {
         InputStream is = Day1.class.getClassLoader().getResourceAsStream(filename);
         return IOUtils.toString(is, StandardCharsets.UTF_8);
@@ -49,6 +55,24 @@ public class Day2 {
         return true;
     }
 
+    public static Balls nrOfBalls(String ssg) {
+        Matcher blue = patternBlue.matcher(ssg);
+        Matcher green = patternGreen.matcher(ssg);
+        Matcher red = patternRed.matcher(ssg);
+        Balls balls = new Balls();
+        if (red.find()) {
+            balls.red = Integer.parseInt(red.group(1));
+        }
+        if (green.find()) {
+            balls.green = Integer.parseInt(green.group(1));
+        }
+        if (blue.find()) {
+            balls.blue = Integer.parseInt(blue.group(1));
+        }
+
+        return balls;
+    }
+
     public static int numberOfPossibleGames(String[] lines) {
         int ctr = 0;
         Pattern patternGameId = Pattern.compile("Game ([0-9]+)");
@@ -70,6 +94,32 @@ public class Day2 {
                 ctr += gameId;
             }
             System.out.println(String.format("Game[ID=%d] Possible=%b ==> %s", gameId, gamePossible, line));
+        }
+        return ctr;
+    }
+
+    public static int minimumNrOfBalls(String fileContent) {
+        return minimumNrOfBalls(fileContent.split("\n"));
+    }
+
+    public static int minimumNrOfBalls(String[] lines) {
+        int ctr = 0;
+        for (String line : lines) {
+            String[] subSetGame = line.split(";");
+            Balls thisGame = new Balls();
+            for (String ssg : subSetGame) {
+                Balls balls = nrOfBalls(ssg);
+                if (balls.red > thisGame.red) {
+                    thisGame.red = balls.red;
+                }
+                if (balls.green > thisGame.green) {
+                    thisGame.green = balls.green;
+                }
+                if (balls.blue > thisGame.blue) {
+                    thisGame.blue = balls.blue;
+                }
+            }
+            ctr += (thisGame.red * thisGame.green * thisGame.blue);
         }
         return ctr;
     }
