@@ -14,7 +14,11 @@ public class App {
             int ctr1 = Day1.decodeCalibrationDocument(day1str);
             System.out.println(String.format("Result Day1 = %d", ctr1));
 
-            int ctr2 = Day1Part2.decodeCalibrationDocument(day1str);
+            int ctr1p2 = Day1Part2.decodeCalibrationDocument(day1str);
+            System.out.println(String.format("Result Day1Part2 = %d", ctr1p2));
+
+            String day2str = Day2.readResource("day2.txt");
+            int ctr2 = Day2.numberOfPossibleGames(day2str);
             System.out.println(String.format("Result Day2 = %d", ctr2));
         } catch (IOException e) {
             e.printStackTrace();
