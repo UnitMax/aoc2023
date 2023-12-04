@@ -93,7 +93,8 @@ public class Day2 {
             if (gamePossible) {
                 ctr += gameId;
             }
-            System.out.println(String.format("Game[ID=%d] Possible=%b ==> %s", gameId, gamePossible, line));
+            // System.out.println(String.format("Game[ID=%d] Possible=%b ==> %s", gameId,
+            // gamePossible, line));
         }
         return ctr;
     }

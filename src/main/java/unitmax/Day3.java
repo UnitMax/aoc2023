@@ -1,17 +1,14 @@
 package unitmax;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.regex.MatchResult;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 
 public class Day3 {
     public static class SchematicNumber {
@@ -29,9 +26,6 @@ public class Day3 {
         int yStart = sn.y - 1;
         int xEnd = sn.xTo + 1;
         int yEnd = sn.y + 1;
-        // System.out.println("------ " + sn.number + " / " + xStart + " " + xEnd + " -
-        // " + yStart + " " + yEnd + " /// "
-        // + board.length + " " + board[0].length);
         for (int i = xStart; i <= xEnd; i++) {
             for (int j = yStart; j <= yEnd; j++) {
                 if (i < 0 || i >= board.length || j < 0 || j >= board[0].length) {
@@ -39,15 +33,12 @@ public class Day3 {
                 }
                 char c = board[i][j];
                 String s = String.format("%c", c);
-                // System.out.println(s);
                 Matcher m = patternSymbol.matcher(s);
                 if (m.matches()) {
-                    // System.out.println("--M----");
                     return true;
                 }
             }
         }
-        // System.out.println("------");
         return false;
     }
 
@@ -72,8 +63,6 @@ public class Day3 {
             String s = schematicString[i];
             Matcher m = patternNumber.matcher(s);
             while (m.find()) {
-                // System.out.println("Found " + m.group(1) + " start=" + m.start() + " end = "
-                // + m.end());
                 SchematicNumber sn = new SchematicNumber();
                 sn.numberS = m.group(1);
                 sn.number = Integer.parseInt(m.group(1));
@@ -98,15 +87,6 @@ public class Day3 {
                 ctr += sn.number;
             }
         }
-        // Print schematic
-        int x = schematicString.length;
-        int y = schematicString[0].length();
-        for (int j = 0; j < y; j++) {
-            for (int i = 0; i < x; i++) {
-                System.out.print(schematic[i][j]);
-            }
-            System.out.println();
-        }
         return ctr;
     }
 
@@ -122,6 +102,64 @@ public class Day3 {
 
     private static Pattern gearPattern = Pattern.compile("\\*");
 
+    private static int findNumberInSchematic(int x, int y, List<SchematicNumber> snList) {
+        for (var sn : snList) {
+            if (sn.y == y && x >= sn.xFrom && x <= sn.xTo) {
+                return sn.number;
+            }
+        }
+        return 0;
+    }
+
+    private static ImmutablePair<Integer, Integer> getRatiosConnectedToGear(Gear g, char[][] schematic,
+            List<SchematicNumber> snList) {
+        boolean foundFirst = false;
+        int first = 0;
+        Set<ImmutablePair<Integer, Integer>> skipCoords = new HashSet<>();
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+                var coords = new ImmutablePair<Integer, Integer>(i, j);
+                if (skipCoords.contains(coords)) {
+                    // System.out.println("skippedy skip " + skipCoords.size());
+                    skipCoords.remove(coords);
+                    continue;
+                }
+
+                int newX = g.x + i;
+                int newY = g.y + j;
+                if ((i == 0 && j == 0) || newX < 0 || newX >= schematic.length || newY < 0
+                        || newY >= schematic[0].length) {
+                    continue;
+                }
+                char c = schematic[newX][newY];
+                Matcher m = patternNumber.matcher(String.format("%c", c));
+                if (m.find()) {
+                    if (!foundFirst) {
+                        foundFirst = true;
+                        // definitely skip the next one
+                        skipCoords.add(new ImmutablePair<Integer, Integer>(i + 1, j));
+                        // skip the one after if they're both numbers (AND not in the line of the gear)
+                        int skip2x = newX + 2;
+                        if (j != 0 && skip2x < schematic.length) {
+                            char c1 = schematic[skip2x - 1][newY];
+                            char c2 = schematic[skip2x][newY];
+                            if (patternNumber.matcher(String.format("%c", c1)).find()
+                                    && patternNumber.matcher(String.format("%c", c2)).find()) {
+                                skipCoords.add(new ImmutablePair<Integer, Integer>(i + 2, j));
+                            }
+                        }
+                        first = findNumberInSchematic(newX, newY, snList);
+                    } else {
+                        int second = findNumberInSchematic(newX, newY, snList);
+                        // System.out.println("First = " + first + " / second = " + second);
+                        return new ImmutablePair<Integer, Integer>(first, second);
+                    }
+                }
+            }
+        }
+        return new ImmutablePair<Integer, Integer>(0, 0);
+    }
+
     public static int gearRatios(String[] schematicString) {
         int ctr = 0;
         char[][] schematic = getBoard(schematicString);
@@ -133,6 +171,10 @@ public class Day3 {
             var gearListSub = gearPattern.matcher(s).results().map(r -> new Gear(r.start(), y))
                     .collect(Collectors.toList());
             gearList.addAll(gearListSub);
+        }
+        for (var g : gearList) {
+            var ratios = getRatiosConnectedToGear(g, schematic, snList);
+            ctr += (ratios.left * ratios.right);
         }
         return ctr;
     }

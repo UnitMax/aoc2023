@@ -26,6 +26,8 @@ public class App {
             String[] day3 = Util.readResourceLines("day3.txt");
             int ctr3 = Day3.decodeEngineSchematic(day3);
             System.out.println(String.format("Result Day3 = %d", ctr3));
+            int ctr3p2 = Day3.gearRatios(day3);
+            System.out.println(String.format("Result Day3Part2 = %d", ctr3p2));
         } catch (IOException e) {
             e.printStackTrace();
             return;
