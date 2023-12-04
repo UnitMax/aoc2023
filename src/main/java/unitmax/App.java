@@ -22,6 +22,10 @@ public class App {
 
             int ctr2p2 = Day2.minimumNrOfBalls(day2str);
             System.out.println(String.format("Result Day2Part2 = %d", ctr2p2));
+
+            String[] day3 = Util.readResourceLines("day3.txt");
+            int ctr3 = Day3.decodeEngineSchematic(day3);
+            System.out.println(String.format("Result Day3 = %d", ctr3));
         } catch (IOException e) {
             e.printStackTrace();
             return;
