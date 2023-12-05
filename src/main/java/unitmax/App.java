@@ -28,6 +28,10 @@ public class App {
             System.out.println(String.format("Result Day3 = %d", ctr3));
             int ctr3p2 = Day3.gearRatios(day3);
             System.out.println(String.format("Result Day3Part2 = %d", ctr3p2));
+
+            String[] day4 = Util.readResourceLines("day4.txt");
+            int ctr4 = Day4.cardScore(day4);
+            System.out.println(String.format("Result Day4 = %d", ctr4));
         } catch (IOException e) {
             e.printStackTrace();
             return;
