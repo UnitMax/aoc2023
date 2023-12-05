@@ -32,6 +32,8 @@ public class App {
             String[] day4 = Util.readResourceLines("day4.txt");
             int ctr4 = Day4.cardScore(day4);
             System.out.println(String.format("Result Day4 = %d", ctr4));
+            int ctr4p2 = Day4.cumulatingCardScore(day4);
+            System.out.println(String.format("Result Day4Part2 = %d", ctr4p2));
         } catch (IOException e) {
             e.printStackTrace();
             return;
