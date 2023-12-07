@@ -34,6 +34,10 @@ public class App {
             System.out.println(String.format("Result Day4 = %d", ctr4));
             int ctr4p2 = Day4.cumulatingCardScore(day4);
             System.out.println(String.format("Result Day4Part2 = %d", ctr4p2));
+
+            String day5 = Util.readResource("day5.txt");
+            long ctr5 = Day5.getSoilLocation(day5);
+            System.out.println(String.format("Result Day5 = %d", ctr5));
         } catch (IOException e) {
             e.printStackTrace();
             return;
