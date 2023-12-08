@@ -38,6 +38,8 @@ public class App {
             String day5 = Util.readResource("day5.txt");
             long ctr5 = Day5.getSoilLocation(day5);
             System.out.println(String.format("Result Day5 = %d", ctr5));
+            long ctr5p2 = Day5.getSoilLocationWithRanges(day5);
+            System.out.println(String.format("Result Day5Part2 = %d", ctr5p2));
         } catch (IOException e) {
             e.printStackTrace();
             return;
