@@ -40,6 +40,12 @@ public class App {
             System.out.println(String.format("Result Day5 = %d", ctr5));
             long ctr5p2 = Day5.getSoilLocationWithRanges(day5);
             System.out.println(String.format("Result Day5Part2 = %d", ctr5p2));
+
+            String[] day6 = Util.readResourceLines("day6.txt");
+            long ctr6 = Day6.leverageBoatRace(day6);
+            System.out.println(String.format("Result Day6 = %d", ctr6));
+            // long ctr5p2 = Day5.getSoilLocationWithRanges(day5);
+            // System.out.println(String.format("Result Day5Part2 = %d", ctr5p2));
         } catch (IOException e) {
             e.printStackTrace();
             return;
