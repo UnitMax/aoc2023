@@ -44,8 +44,8 @@ public class App {
             String[] day6 = Util.readResourceLines("day6.txt");
             long ctr6 = Day6.leverageBoatRace(day6);
             System.out.println(String.format("Result Day6 = %d", ctr6));
-            // long ctr5p2 = Day5.getSoilLocationWithRanges(day5);
-            // System.out.println(String.format("Result Day5Part2 = %d", ctr5p2));
+            long ctr6p2 = Day6.leverageBoatRaceNoSpaces(day6);
+            System.out.println(String.format("Result Day6Part2 = %d", ctr6p2));
         } catch (IOException e) {
             e.printStackTrace();
             return;

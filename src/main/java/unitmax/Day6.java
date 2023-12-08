@@ -56,4 +56,29 @@ public class Day6 {
         return ctr;
     }
 
+    public static long leverageBoatRaceNoSpaces(String[] input) {
+        List<Race> races = new ArrayList<>();
+        List<Long> times = new ArrayList<>();
+        List<Long> dists = new ArrayList<>();
+        String timesString = input[0].replace(" ", "");
+        String distString = input[1].replace(" ", "");
+
+        nrPattern.matcher(timesString).results().forEach(result -> {
+            times.add(Long.parseLong(result.group(1)));
+        });
+        nrPattern.matcher(distString).results().forEach(result -> {
+            dists.add(Long.parseLong(result.group(1)));
+        });
+        for (int i = 0; i < times.size(); i++) {
+            races.add(new Race(times.get(i), dists.get(i)));
+        }
+
+        long ctr = 1;
+        for (var race : races) {
+            ctr *= getNrOfWaysToBeatRecord(race);
+        }
+
+        return ctr;
+    }
+
 }
