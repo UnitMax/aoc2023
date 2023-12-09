@@ -184,7 +184,7 @@ public class Day7Part2 {
         // Filter hands by strengths into sublist
         List<List<Hand>> loloHands = new ArrayList<>();
         Arrays.stream(Hand.strengths).forEach(str -> {
-            System.out.println("Sublist for str = " + str);
+            // System.out.println("Sublist for str = " + str);
             // Get sublist by filter
             var subList = handList.stream().filter(hand -> hand.strength == str).collect(Collectors.toList());
             // Order sublist within itself
@@ -197,7 +197,7 @@ public class Day7Part2 {
 
         long ctr = 0;
         for (var hand : finalHandList) {
-            System.out.println(rank + ": " + hand.hand + " (" + hand.bid + ") [Strength=" + hand.strength + "]");
+            // System.out.println(rank + ": " + hand.hand + " (" + hand.bid + ") [Strength=" + hand.strength + "]");
             ctr += (rank * hand.bid);
             rank--;
         }

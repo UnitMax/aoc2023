@@ -56,6 +56,8 @@ public class App {
             String[] day8 = Util.readResourceLines("day8.txt");
             long ctr8 = Day8.nrOfSteps(day8);
             System.out.println(String.format("Result Day8 = %d", ctr8));
+            long ctr8p2 = Day8.nrOfStepsGhost(day8);
+            System.out.println(String.format("Result Day8Part2 = %d", ctr8p2));
         } catch (IOException e) {
             e.printStackTrace();
             return;
