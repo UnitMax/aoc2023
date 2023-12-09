@@ -60,8 +60,10 @@ public class App {
             System.out.println(String.format("Result Day8Part2 = %d", ctr8p2));
 
             String[] day9 = Util.readResourceLines("day9.txt");
-            long ctr9 = Day9.subOfExtrapolatedValues(day9);
+            long ctr9 = Day9.sumOfExtrapolatedValues(day9);
             System.out.println(String.format("Result Day9 = %d", ctr9));
+            long ctr9p2 = Day9.sumOfExtrapolatedValuesBackwards(day9);
+            System.out.println(String.format("Result Day9Part2 = %d", ctr9p2));
         } catch (IOException e) {
             e.printStackTrace();
             return;
