@@ -58,6 +58,10 @@ public class App {
             System.out.println(String.format("Result Day8 = %d", ctr8));
             long ctr8p2 = Day8.nrOfStepsGhost(day8);
             System.out.println(String.format("Result Day8Part2 = %d", ctr8p2));
+
+            String[] day9 = Util.readResourceLines("day9.txt");
+            long ctr9 = Day9.subOfExtrapolatedValues(day9);
+            System.out.println(String.format("Result Day9 = %d", ctr9));
         } catch (IOException e) {
             e.printStackTrace();
             return;
