@@ -52,6 +52,10 @@ public class App {
             System.out.println(String.format("Result Day7 = %d", ctr7));
             long ctr7p2 = Day7Part2.totalWinnings(day7);
             System.out.println(String.format("Result Day7Part2 = %d", ctr7p2));
+
+            String[] day8 = Util.readResourceLines("day8.txt");
+            long ctr8 = Day8.nrOfSteps(day8);
+            System.out.println(String.format("Result Day8 = %d", ctr8));
         } catch (IOException e) {
             e.printStackTrace();
             return;
