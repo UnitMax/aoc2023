@@ -64,6 +64,10 @@ public class App {
             System.out.println(String.format("Result Day9 = %d", ctr9));
             long ctr9p2 = Day9.sumOfExtrapolatedValuesBackwards(day9);
             System.out.println(String.format("Result Day9Part2 = %d", ctr9p2));
+
+            String[] day10 = Util.readResourceLines("day10.txt");
+            long ctr10 = Day10.pipeMaze(day10);
+            System.out.println(String.format("Result Day10 = %d", ctr10));
         } catch (IOException e) {
             e.printStackTrace();
             return;
