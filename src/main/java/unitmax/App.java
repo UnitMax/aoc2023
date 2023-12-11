@@ -2,6 +2,8 @@ package unitmax;
 
 import java.io.IOException;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+
 /**
  * Hello world!
  *
@@ -66,8 +68,9 @@ public class App {
             System.out.println(String.format("Result Day9Part2 = %d", ctr9p2));
 
             String[] day10 = Util.readResourceLines("day10.txt");
-            long ctr10 = Day10.pipeMaze(day10);
-            System.out.println(String.format("Result Day10 = %d", ctr10));
+            var ctr10 = Day10.pipeMaze(day10);
+            System.out.println(String.format("Result Day10 = %d", ctr10.getLeft()));
+            System.out.println(String.format("Result Day10Part2 = %d", ctr10.getRight()));
         } catch (IOException e) {
             e.printStackTrace();
             return;

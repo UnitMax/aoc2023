@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import java.awt.Polygon;
+
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 public class Day10 {
@@ -20,6 +22,32 @@ public class Day10 {
             this.x = x;
             this.y = y;
         }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + (int) (x ^ (x >>> 32));
+            result = prime * result + (int) (y ^ (y >>> 32));
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            Coord other = (Coord) obj;
+            if (x != other.x)
+                return false;
+            if (y != other.y)
+                return false;
+            return true;
+        }
+
     }
 
     /*
@@ -48,12 +76,6 @@ public class Day10 {
         pipeMap.put('J', new ImmutablePair<>(Direction.N, Direction.W));
         pipeMap.put('7', new ImmutablePair<>(Direction.S, Direction.W));
         pipeMap.put('F', new ImmutablePair<>(Direction.S, Direction.E));
-        // pipeMap.put('|', new ImmutablePair<>(Direction.S, Direction.N));
-        // pipeMap.put('-', new ImmutablePair<>(Direction.E, Direction.W));
-        // pipeMap.put('L', new ImmutablePair<>(Direction.S, Direction.W));
-        // pipeMap.put('J', new ImmutablePair<>(Direction.S, Direction.E));
-        // pipeMap.put('7', new ImmutablePair<>(Direction.N, Direction.E));
-        // pipeMap.put('F', new ImmutablePair<>(Direction.N, Direction.W));
     }
 
     static boolean isGround(Character c) {
@@ -152,14 +174,11 @@ public class Day10 {
         return Optional.empty();
     }
 
-    public static long pipeMaze(String[] input) {
+    public static ImmutablePair<Long, Long> pipeMaze(String[] input) {
         var boardWidth = input[0].strip().length();
         var boardHeight = input.length;
 
-        // System.out.println("----- / width = " + boardWidth + " / height = " + boardHeight);
-
         Pipe[][] board = new Pipe[boardHeight][boardWidth];
-
         var startingLocation = new Coord(-1, -1);
 
         // init board and get starting location
@@ -182,16 +201,18 @@ public class Day10 {
 
         long ctr = 1;
         boolean endFound = false;
+        Polygon polygon = new Polygon();
+        polygon.addPoint((int) currentLocation.x, (int) currentLocation.y);
+        List<Coord> pipeCoords = new ArrayList<>();
+        pipeCoords.add(startingLocation);
+        pipeCoords.add(currentLocation);
         while (!endFound) {
-            // System.out.println("----");
-            // System.out.println("Ctr = " + ctr);
-            // System.out.println(String.format("Current pipe = %c", currentPipe.symbol));
-            // System.out.println(String.format("Current location = %d, %d", currentLocation.x, currentLocation.y));
             Direction nextPipeDirection = currentPipe.exit().get();
-            // System.out.println("Next pipe in direction " + nextPipeDirection);
             Coord nextDist = getCoordDist(nextPipeDirection);
             // Technically we shouldn't do any validation here because we can't go off board
             currentLocation = new Coord(currentLocation.x + nextDist.x, currentLocation.y + nextDist.y);
+            pipeCoords.add(currentLocation);
+            polygon.addPoint((int) currentLocation.x, (int) currentLocation.y);
             Pipe nextPipe = board[(int) currentLocation.y][(int) currentLocation.x];
             nextPipe.enter(nextPipeDirection);
             if (isStart(nextPipe.symbol)) {
@@ -201,13 +222,16 @@ public class Day10 {
             ctr++;
         }
 
-        // for (int y = 0; y < boardHeight; y++) {
-        //     for (int x = 0; x < boardWidth; x++) {
-        //         System.out.print(board[y][x].symbol);
-        //     }
-        //     System.out.println();
-        // }
+        long enclosedTiles = 0;
+        for (int y = 0; y < board.length; y++) {
+            for (int x = 0; x < board[0].length; x++) {
+                if (polygon.contains(x, y)
+                        && (isGround(board[y][x].symbol) || !pipeCoords.contains(new Coord(x, y))) /* junk coords */ ) {
+                    enclosedTiles++;
+                }
+            }
+        }
 
-        return ctr / 2;
+        return new ImmutablePair<Long, Long>(ctr / 2, enclosedTiles);
     }
 }
