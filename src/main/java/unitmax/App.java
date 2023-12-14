@@ -75,6 +75,7 @@ public class App {
             String[] day11 = Util.readResourceLines("day11.txt");
             var ctr11 = Day11.shortestPaths(day11);
             System.out.println(String.format("Result Day11 = %d", ctr11.getLeft()));
+            System.out.println(String.format("Result Day11Part2 = %d", ctr11.getRight()));
         } catch (IOException e) {
             e.printStackTrace();
             return;
