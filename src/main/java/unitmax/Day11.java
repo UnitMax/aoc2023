@@ -13,6 +13,17 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 
 public class Day11 {
 
+    static class Galaxy {
+        public int x;
+        public int y;
+
+        public Galaxy(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+
+    }
+
     private static String[] expandGalaxy(String[] input) {
         Map<Integer, Boolean> emptyRows = new HashMap<>();
         Map<Integer, Boolean> emptyCols = new HashMap<>();
@@ -61,12 +72,31 @@ public class Day11 {
         return (String[]) inputList.toArray(new String[inputList.size()]);
     }
 
+    private static int manhattanDistance(int x1, int y1, int x2, int y2) {
+        return Math.abs(x1 - x2) + Math.abs(y1 - y2);
+    }
+
     public static ImmutablePair<Long, Long> shortestPaths(String[] input) {
         printGalaxy(input);
         var expandedInput = expandGalaxy(input);
         System.out.println("----");
         printGalaxy(expandedInput);
-        return new ImmutablePair<Long, Long>((long) 0, (long) 0);
+        var galaxies = getGalaxies(expandedInput);
+        List<ImmutablePair<Galaxy, Galaxy>> galaxyPairs = new ArrayList<>();
+        long ctr = 0;
+        for (int i = 0; i < galaxies.size(); i++) {
+            for (int j = i + 1; j < galaxies.size(); j++) {
+                var g1 = galaxies.get(i);
+                var g2 = galaxies.get(j);
+                galaxyPairs.add(new ImmutablePair<Day11.Galaxy, Day11.Galaxy>(galaxies.get(i), galaxies.get(j)));
+                var mhd = manhattanDistance(g1.x, g1.y, g2.x, g2.y);
+                // System.out.println(String.format("MHD between (%d,%d),(%d,%d)=%d", g1.x,
+                // g1.y, g2.x, g2.y, mhd));
+                ctr += mhd;
+            }
+        }
+        // System.out.println("Nr of galaxy pairs: " + galaxyPairs.size());
+        return new ImmutablePair<Long, Long>((long) ctr, (long) 0);
     }
 
     private static void printGalaxy(String[] input) {
@@ -76,6 +106,18 @@ public class Day11 {
             }
             System.out.println();
         }
+    }
+
+    private static List<Galaxy> getGalaxies(String[] input) {
+        List<Galaxy> galaxies = new ArrayList<>();
+        for (int i = 0; i < input.length; i++) {
+            for (int j = 0; j < input[0].length(); j++) {
+                if (input[i].charAt(j) == '#') {
+                    galaxies.add(new Galaxy(j, i));
+                }
+            }
+        }
+        return galaxies;
     }
 
 }

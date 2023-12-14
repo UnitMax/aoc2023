@@ -72,7 +72,7 @@ public class App {
             System.out.println(String.format("Result Day10 = %d", ctr10.getLeft()));
             System.out.println(String.format("Result Day10Part2 = %d", ctr10.getRight()));
 
-            String[] day11 = Util.readResourceLines("day11test.txt");
+            String[] day11 = Util.readResourceLines("day11.txt");
             var ctr11 = Day11.shortestPaths(day11);
             System.out.println(String.format("Result Day11 = %d", ctr11.getLeft()));
         } catch (IOException e) {
