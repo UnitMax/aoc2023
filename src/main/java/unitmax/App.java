@@ -72,10 +72,15 @@ public class App {
             System.out.println(String.format("Result Day10 = %d", ctr10.getLeft()));
             System.out.println(String.format("Result Day10Part2 = %d", ctr10.getRight()));
 
-            String[] day11 = Util.readResourceLines("day11.txt");
-            var ctr11 = Day11.shortestPaths(day11);
-            System.out.println(String.format("Result Day11 = %d", ctr11.getLeft()));
-            System.out.println(String.format("Result Day11Part2 = %d", ctr11.getRight()));
+            // String[] day11 = Util.readResourceLines("day11.txt");
+            // var ctr11 = Day11.shortestPaths(day11);
+            // System.out.println(String.format("Result Day11 = %d", ctr11.getLeft()));
+            // System.out.println(String.format("Result Day11Part2 = %d", ctr11.getRight()));
+
+            String[] day12 = Util.readResourceLines("day12test.txt");
+            var ctr12 = Day12.springRecords(day12);
+            System.out.println(String.format("Result Day12 = %d", ctr12.getLeft()));
+            System.out.println(String.format("Result Day12Part2 = %d", ctr12.getRight()));
         } catch (IOException e) {
             e.printStackTrace();
             return;
