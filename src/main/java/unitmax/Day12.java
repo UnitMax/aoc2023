@@ -57,9 +57,6 @@ public class Day12 {
     private static long remainingCombinations(String str, long currentCount, Queue<Long> givenCountQueue,
             boolean lastCharDotOrStart, String finalString, List<Long> orig) {
         Queue<Long> countQueue = new LinkedList<>(givenCountQueue); // deep copy
-        // System.out
-        // .println("Remaining combinations: " + str + " [currentCount=" + currentCount
-        // + "][" + countQueue + "]");
         if (str == null || str.length() == 0) {
             System.out.println("Empty string");
             return 0;
@@ -70,40 +67,20 @@ public class Day12 {
             // last character
             if ((c == '#' || c == '?') && ((currentCount == 1 && countQueue.isEmpty())
                     || (lastCharDotOrStart && currentCount == 0 && countQueue.size() == 1 && countQueue.peek() == 1))) {
-                // System.out
-                //         .println("+1[Finished#] on c=" + c + " cc=" + currentCount + " cqEmpty=" +
-                //                 countQueue.isEmpty() + " cc=" + countQueue);
-                // System.out.println("OK Finished = " + finalString + "#");
-                // if (!check(finalString + "#", orig)) {
-                //     throw new RuntimeException(finalString + "#" + " | " + orig);
-                // }
                 return 1;
             } else if ((c == '.' || c == '?') && currentCount == 0 && countQueue.isEmpty()) {
-                // System.out
-                //         .println("+1[Finished.] on c=" + c + " cc=" + currentCount + " cqEmpty=" +
-                //                 countQueue.isEmpty());
-                // System.out.println("OK Finished = " + finalString + ".");
-                // if (!check(finalString + ".", orig)) {
-                //     throw new RuntimeException(finalString + "." + " | " + orig);
-                // }
                 return 1;
             } else {
-                // System.out
-                //         .println("+0[Finished] on c=" + c + " cc=" + currentCount + " cqEmpty=" +
-                //                 countQueue.isEmpty());
-                // System.out.println("XX Finished = " + finalString + c);
                 return 0;
             }
         }
         if (c == '#') {
             if (currentCount == 0 && !lastCharDotOrStart) {
-                // System.out.println("c==# and cc <= 0 // " + finalString + c);
                 return 0; // doesn't work, defective count already reached, but more defective found
             } else if (currentCount == 0 && lastCharDotOrStart) {
                 // start a new parsingDefective loop
                 Long currentCountNew = countQueue.poll();
                 if (currentCountNew == null) {
-                    // System.out.println("c==# and queue empty // " + finalString + c);
                     return 0; // queue empty
                 } else {
                     currentCount = currentCountNew - 1;
@@ -115,7 +92,6 @@ public class Day12 {
             }
         } else if (c == '.') {
             if (!lastCharDotOrStart && currentCount > 0) {
-                // System.out.println("c=. and cc > 0 // " + finalString + c);
                 return 0;
             }
             return remainingCombinations(newStr, currentCount, countQueue, true, finalString + c, orig);
@@ -154,8 +130,6 @@ public class Day12 {
         var splitInput = input.split(" ");
         var springs = splitInput[0].strip();
         var countsString = splitInput[1].strip();
-        System.out.println(springs);
-        System.out.println(countsString);
 
         var countList = Arrays.stream(countsString.split(",")).map(s -> Long.parseLong(s)).collect(Collectors.toList());
         Queue<Long> countQueue = new LinkedList<>(countList);
@@ -172,12 +146,9 @@ public class Day12 {
     public static ImmutablePair<Long, Long> springRecords(String[] input) {
         long ctr1 = 0;
         long ctr2 = 0;
-        int c = 0;
         for (var combination : input) {
             ctr1 += combinations(combination);
-            ctr2 += combinations(unfold(combination));
-            c++;
-            System.out.println("--" + c + "--");
+            // ctr2 += combinations(unfold(combination));
         }
         return new ImmutablePair<Long, Long>(ctr1, ctr2);
     }
