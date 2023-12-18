@@ -2,113 +2,68 @@ package unitmax;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 public class Day12 {
 
-    private static boolean check(String s, List<Long> l) {
-        Queue<Long> q = new LinkedList<>(l);
-        long currentCount = q.poll();
-        boolean countingPounds = s.charAt(0) == '#';
-        for (int i = 0; i < s.length(); i++) {
-            var c = s.charAt(i);
-            if (c == '#' && countingPounds) {
-                if (currentCount == 0) {
-                    System.out.println("Failed at " + i);
-                    return false;
-                }
-                currentCount--;
-                countingPounds = true;
-            } else if (c == '#' && !countingPounds) {
-                if (currentCount == 0) {
-                    System.out.println("Failed at " + i);
-                    return false;
-                } else {
-                    currentCount--;
-                    countingPounds = true;
-                }
-            } else if (c == '.') {
-                if (countingPounds) {
-                    if (currentCount > 0) {
-                        System.out.println("Failed at " + i);
-                        return false;
-                    }
-                    if (q.isEmpty()) {
-                        currentCount = 0;
-                    } else {
-                        currentCount = q.poll();
-                    }
-                }
-                countingPounds = false;
-            }
+    private static Map<String, Long> resultMap = new HashMap<>();
+
+    private static long countCombinationsCached(String springs, Queue<Long> myGroups) {
+        if (resultMap.containsKey(springs + myGroups.toString())) {
+            return resultMap.get(springs + myGroups.toString());
         }
-        if (currentCount != 0 || !q.isEmpty()) {
-            System.out.println("Failed at end");
-        }
-        return currentCount == 0 && q.isEmpty();
+        var result = countCombinations(springs, myGroups);
+        resultMap.putIfAbsent(springs + myGroups.toString(), result);
+        return result;
     }
 
-    private static long remainingCombinations(String str, long currentCount, Queue<Long> givenCountQueue,
-            boolean lastCharDotOrStart, String finalString, List<Long> orig) {
+    private static Pattern workingOrUnknownSprings = Pattern.compile("[\\?\\.]*");
+
+    private static long countCombinations(String input, Queue<Long> givenCountQueue) {
         Queue<Long> countQueue = new LinkedList<>(givenCountQueue); // deep copy
-        if (str == null || str.length() == 0) {
-            System.out.println("Empty string");
+        if (countQueue.size() == 0) {
             return 0;
         }
-        var c = str.charAt(0);
-        var newStr = str.substring(1);
-        if (str.length() == 1) {
-            // last character
-            if ((c == '#' || c == '?') && ((currentCount == 1 && countQueue.isEmpty())
-                    || (lastCharDotOrStart && currentCount == 0 && countQueue.size() == 1 && countQueue.peek() == 1))) {
-                return 1;
-            } else if ((c == '.' || c == '?') && currentCount == 0 && countQueue.isEmpty()) {
-                return 1;
-            } else {
-                return 0;
+        long currentCount = countQueue.peek();
+        if (currentCount > input.length()) {
+            return 0;
+        }
+        long nrOfCombinations = 0;
+        for (int i = 0; i <= input.length() - (int) currentCount; i++) {
+            if (i > 0 && input.charAt(i - 1) == '#') {
+                // previous spring is broken => not possible because broken group must be contiguous
+                break;
+            }
+            // [currentSplicedGrouping][restOfString] = input
+            String currentSplicedGrouping = input.substring(i, i + (int) currentCount);
+            if (currentSplicedGrouping.contains(".")) {
+                // Cannot be a contiguous group of broken springs => try next combination
+                continue;
+            }
+            // Beyond this point, CURRENT springs only contains either # or ?, i.e. the current grouping is valid
+            String restOfString = input.substring(i + (int) currentCount);
+            if (workingOrUnknownSprings.matcher(restOfString).matches() && countQueue.size() == 1) {
+                // Queue size = 1 => This is the last possible grouping => Try it for the rest of the string
+                nrOfCombinations++;
+            } else if (restOfString.startsWith(".") || restOfString.startsWith("?")) {
+                // Not the last entry in the queue => Start a new branch to search for possibilities with this grouping already fulfilled
+                // Requirement: we encountered a "border" (either . or ? acting as .)
+                // -> Continue with next part of the string EXCLUDING the border (at this point we can have new groupings again)
+                // -> "Consume" one group/count
+                Queue<Long> newCountQueue = new LinkedList<>(countQueue);
+                newCountQueue.poll();
+                nrOfCombinations += countCombinationsCached(restOfString.substring(1), newCountQueue);
             }
         }
-        if (c == '#') {
-            if (currentCount == 0 && !lastCharDotOrStart) {
-                return 0; // doesn't work, defective count already reached, but more defective found
-            } else if (currentCount == 0 && lastCharDotOrStart) {
-                // start a new parsingDefective loop
-                Long currentCountNew = countQueue.poll();
-                if (currentCountNew == null) {
-                    return 0; // queue empty
-                } else {
-                    currentCount = currentCountNew - 1;
-                }
-                return remainingCombinations(newStr, currentCount, countQueue, false, finalString + c, orig);
-            } else {
-                currentCount--;
-                return remainingCombinations(newStr, currentCount, countQueue, false, finalString + c, orig);
-            }
-        } else if (c == '.') {
-            if (!lastCharDotOrStart && currentCount > 0) {
-                return 0;
-            }
-            return remainingCombinations(newStr, currentCount, countQueue, true, finalString + c, orig);
-        } else {
-            // c basically must be '?' here
-            if (c != '?') {
-                System.out.println(c);
-                throw new RuntimeException("This should not happen");
-            }
-
-            var poundVariant = remainingCombinations("#" + newStr, currentCount, countQueue, lastCharDotOrStart,
-                    finalString, orig);
-            var dotVariant = remainingCombinations("." + newStr, currentCount, countQueue, lastCharDotOrStart,
-                    finalString, orig);
-
-            return poundVariant + dotVariant;
-        }
+        return nrOfCombinations;
     }
 
     private static String unfold(String input) {
@@ -133,14 +88,7 @@ public class Day12 {
 
         var countList = Arrays.stream(countsString.split(",")).map(s -> Long.parseLong(s)).collect(Collectors.toList());
         Queue<Long> countQueue = new LinkedList<>(countList);
-        var currentCount = countQueue.poll();
-
-        if (springs.charAt(0) == '?') {
-            return remainingCombinations("#" + springs.substring(1), currentCount, countQueue, true, "", countList)
-                    + remainingCombinations("." + springs.substring(1), currentCount, countQueue, true, "", countList);
-        } else {
-            return remainingCombinations(springs, currentCount, countQueue, true, "", countList);
-        }
+        return countCombinationsCached(springs, countQueue);
     }
 
     public static ImmutablePair<Long, Long> springRecords(String[] input) {
@@ -148,7 +96,7 @@ public class Day12 {
         long ctr2 = 0;
         for (var combination : input) {
             ctr1 += combinations(combination);
-            // ctr2 += combinations(unfold(combination));
+            ctr2 += combinations(unfold(combination));
         }
         return new ImmutablePair<Long, Long>(ctr1, ctr2);
     }
