@@ -77,7 +77,7 @@ public class App {
             // System.out.println(String.format("Result Day11 = %d", ctr11.getLeft()));
             // System.out.println(String.format("Result Day11Part2 = %d", ctr11.getRight()));
 
-            String[] day12 = Util.readResourceLines("day12test.txt");
+            String[] day12 = Util.readResourceLines("day12.txt");
             var ctr12 = Day12.springRecords(day12);
             System.out.println(String.format("Result Day12 = %d", ctr12.getLeft()));
             System.out.println(String.format("Result Day12Part2 = %d", ctr12.getRight()));
