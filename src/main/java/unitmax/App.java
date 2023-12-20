@@ -81,6 +81,11 @@ public class App {
             var ctr12 = Day12.springRecords(day12);
             System.out.println(String.format("Result Day12 = %d", ctr12.getLeft()));
             System.out.println(String.format("Result Day12Part2 = %d", ctr12.getRight()));
+
+            String[] day13 = Util.readResourceLines("day13test.txt");
+            var ctr13 = Day13.getPatterns(day13);
+            System.out.println(String.format("Result Day13 = %d", ctr13.getLeft()));
+            System.out.println(String.format("Result Day13Part2 = %d", ctr13.getRight()));
         } catch (IOException e) {
             e.printStackTrace();
             return;
