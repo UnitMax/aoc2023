@@ -9,7 +9,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 
 public class Day13 {
 
-    private static long mirror(String[] input) {
+    private static long mirror(String[] input, long exclude) {
         Map<Integer, Integer> hashMap = new HashMap<>();
         List<Integer> hashList = new ArrayList<>();
         for (int i = 0; i < input.length; i++) {
@@ -22,7 +22,7 @@ public class Day13 {
                 var idx1 = start + i + 1;
                 var idx2 = start - i;
                 if (idx1 >= hashList.size() || idx2 < 0) {
-                    if (atleastOnce) {
+                    if (atleastOnce && (start + 1) != exclude) {
                         return start + 1;
                     } else {
                         break;
@@ -39,7 +39,7 @@ public class Day13 {
         return 0;
     }
 
-    private static long getMirrorVertically(String[] input) {
+    private static long mirrorVert(String[] input, long exclude) {
         // basically invert this
         List<String> newInput = new ArrayList<>();
         for (int i = 0; i < input[0].length(); i++) {
@@ -50,7 +50,13 @@ public class Day13 {
             newInput.add(sb.toString());
         }
 
-        return mirror(newInput.toArray(new String[newInput.size()]));
+        return mirror(newInput.toArray(new String[newInput.size()]), exclude);
+    }
+
+    private static void printMaze(List<String> maze) {
+        for (var s : maze) {
+            System.out.println(s);
+        }
     }
 
     public static ImmutablePair<Long, Long> getPatterns(String[] input) {
@@ -71,10 +77,38 @@ public class Day13 {
 
         for (var maze : mazes) {
             var mazeArray = maze.toArray(new String[maze.size()]);
-            var horiz = (100 * mirror(mazeArray));
-            var vert = getMirrorVertically(mazeArray);
-            ctr1 += horiz;
+            var horiz = mirror(mazeArray, -0xDEADBEEF);
+            var vert = mirrorVert(mazeArray, -0xDEADBEEF);
+            ctr1 += (100 * horiz);
             ctr1 += vert;
+
+            boolean found = false;
+            complete_break: for (int i = 0; i < maze.size(); i++) {
+                var s = maze.get(i);
+                for (int j = 0; j < s.length(); j++) {
+                    StringBuilder newS = new StringBuilder(s);
+                    var oldC = s.charAt(j);
+                    newS.setCharAt(j, oldC == '.' ? '#' : '.');
+                    maze.set(i, newS.toString());
+
+                    var mazeArray2 = maze.toArray(new String[maze.size()]);
+                    var horiz2 = mirror(mazeArray2, horiz);
+                    var vert2 = mirrorVert(mazeArray2, vert);
+                    if (horiz2 != 0 || vert2 != 0) {
+                        ctr2 += (100 * horiz2);
+                        ctr2 += vert2;
+                        found = true;
+                        break complete_break;
+                    }
+
+                    newS.setCharAt(j, oldC);
+                    maze.set(i, newS.toString());
+                }
+            }
+            if (!found) {
+                ctr2 += (100 * horiz);
+                ctr2 += vert;
+            }
         }
 
         return new ImmutablePair<Long, Long>(ctr1, ctr2);
