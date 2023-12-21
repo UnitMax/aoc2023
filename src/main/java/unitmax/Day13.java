@@ -53,12 +53,6 @@ public class Day13 {
         return mirror(newInput.toArray(new String[newInput.size()]), exclude);
     }
 
-    private static void printMaze(List<String> maze) {
-        for (var s : maze) {
-            System.out.println(s);
-        }
-    }
-
     public static ImmutablePair<Long, Long> getPatterns(String[] input) {
         long ctr1 = 0;
         long ctr2 = 0;
@@ -82,7 +76,6 @@ public class Day13 {
             ctr1 += (100 * horiz);
             ctr1 += vert;
 
-            boolean found = false;
             complete_break: for (int i = 0; i < maze.size(); i++) {
                 var s = maze.get(i);
                 for (int j = 0; j < s.length(); j++) {
@@ -97,17 +90,12 @@ public class Day13 {
                     if (horiz2 != 0 || vert2 != 0) {
                         ctr2 += (100 * horiz2);
                         ctr2 += vert2;
-                        found = true;
                         break complete_break;
                     }
 
                     newS.setCharAt(j, oldC);
                     maze.set(i, newS.toString());
                 }
-            }
-            if (!found) {
-                ctr2 += (100 * horiz);
-                ctr2 += vert;
             }
         }
 
