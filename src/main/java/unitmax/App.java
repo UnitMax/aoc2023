@@ -75,7 +75,8 @@ public class App {
             // String[] day11 = Util.readResourceLines("day11.txt");
             // var ctr11 = Day11.shortestPaths(day11);
             // System.out.println(String.format("Result Day11 = %d", ctr11.getLeft()));
-            // System.out.println(String.format("Result Day11Part2 = %d", ctr11.getRight()));
+            // System.out.println(String.format("Result Day11Part2 = %d",
+            // ctr11.getRight()));
 
             String[] day12 = Util.readResourceLines("day12.txt");
             var ctr12 = Day12.springRecords(day12);
@@ -86,6 +87,12 @@ public class App {
             var ctr13 = Day13.getPatterns(day13);
             System.out.println(String.format("Result Day13 = %d", ctr13.getLeft()));
             System.out.println(String.format("Result Day13Part2 = %d", ctr13.getRight()));
+
+            String[] day14 = Util.readResourceLines("day14test.txt");
+            var ctr14 = Day14.totalLoad(day14);
+            System.out.println(String.format("Result Day14 = %d", ctr14.getLeft()));
+            System.out.println(String.format("Result Day14Part2 = %d", ctr14.getRight()));
+
         } catch (IOException e) {
             e.printStackTrace();
             return;
