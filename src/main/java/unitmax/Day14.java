@@ -10,66 +10,67 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 
 public class Day14 {
 
-    static class Coordinate {
-        public int x;
-        public int y;
-
-        public Coordinate(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-
-    }
-
-    private static void shakeUp(String[] input) {
-        List<ImmutablePair<Coordinate, Integer>> moveUp = new ArrayList<>();
-        List<StringBuilder> stringBuilders = new ArrayList<>();
-        for (int i = 0; i < input.length; i++) {
-            for (int j = 0; j < input[0].length(); j++) {
-                var c = input[i].charAt(j);
-                if (c == 'O') {
-                    int ctr = 0;
-                    for (int k = i - 1; k >= 0; k--) {
-                        var cAbove = input[k].charAt(j);
-                        if (cAbove == '.') {
-                            ctr++;
-                        } else if (cAbove == '#') {
-                            break;
-                        } else {
-                            // that means it's an O ==> skip
-                        }
-                    }
-                    if (ctr > 0) {
-                        moveUp.add(new ImmutablePair<Coordinate, Integer>(new Coordinate(j, i), ctr));
-                    }
+    /**
+     * 0 => .
+     * 1 => #
+     * 2 => O
+     */
+    // ##..O.O.OO
+    // ##...OO.OO
+    // ##...O.OOO
+    // ##....OOOO
+    private static List<Byte> shakeUpSequence(List<Byte> input) {
+        int countMoving = 0;
+        List<Integer> resetPositions = new ArrayList<>();
+        for (int i = 0; i < input.size(); i++) {
+            var b = input.get(i);
+            if (b == 2) {
+                countMoving++;
+                resetPositions.add(i);
+            } else if (b == 1) {
+                for (var rp : resetPositions) {
+                    input.set(rp, (byte) 0);
                 }
+                for (int j = 0; j < countMoving; j++) {
+                    input.set(i - j - 1, (byte) 2);
+                }
+                resetPositions.clear();
+                countMoving = 0;
             }
-            stringBuilders.add(new StringBuilder(input[i]));
         }
-        Collections.sort(moveUp, (c1, c2) -> c1.getLeft().y - c2.getLeft().y);
-        for (var c : moveUp) {
-            var coord = c.getLeft();
-            stringBuilders.get(coord.y).setCharAt(coord.x, '.');
-            stringBuilders.get(coord.y - c.getRight()).setCharAt(coord.x, 'O');
+        for (var rp : resetPositions) {
+            input.set(rp, (byte) 0);
         }
-        for (int i = 0; i < input.length; i++) {
-            input[i] = stringBuilders.get(i).toString();
+        for (int j = 0; j < countMoving; j++) {
+            input.set(input.size() - 1 - j, (byte) 2);
         }
+        return input;
     }
 
     public static ImmutablePair<Long, Long> totalLoad(String[] input) {
         long ctr1 = 0;
         long ctr2 = 0;
+        List<List<Byte>> sequences = new ArrayList<>();
         for (int i = 0; i < input.length; i++) {
             input[i] = input[i].strip();
         }
-        shakeUp(input);
-        for (int i = 0; i < input.length; i++) {
-            System.out.println(input[i]);
-            for (int j = 0; j < input[0].length(); j++) {
-                if (input[i].charAt(j) == 'O') {
-                    ctr1 += (input.length - i);
+        for (int j = 0; j < input[0].length(); j++) {
+            List<Byte> sequence = new ArrayList<>();
+            for (int i = input.length - 1; i >= 0; i--) {
+                var c = input[i].charAt(j);
+                sequence.add((byte) (c == '.' ? 0 : (c == '#' ? 1 : 2)));
+            }
+            sequences.add(sequence);
+        }
+
+        for (var s : sequences) {
+            shakeUpSequence(s);
+            int ctr = 1;
+            for (var b : s) {
+                if (b == 2) {
+                    ctr1 += ctr;
                 }
+                ctr++;
             }
         }
         return new ImmutablePair<Long, Long>(ctr1, ctr2);
