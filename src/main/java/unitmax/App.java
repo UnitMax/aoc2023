@@ -88,7 +88,7 @@ public class App {
             System.out.println(String.format("Result Day13 = %d", ctr13.getLeft()));
             System.out.println(String.format("Result Day13Part2 = %d", ctr13.getRight()));
 
-            String[] day14 = Util.readResourceLines("day14test.txt");
+            String[] day14 = Util.readResourceLines("day14.txt");
             var ctr14 = Day14.totalLoad(day14);
             System.out.println(String.format("Result Day14 = %d", ctr14.getLeft()));
             System.out.println(String.format("Result Day14Part2 = %d", ctr14.getRight()));
