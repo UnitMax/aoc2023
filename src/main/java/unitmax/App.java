@@ -97,6 +97,11 @@ public class App {
             var ctr15 = Day15.hashResult(day15);
             System.out.println(String.format("Result Day15 = %d", ctr15.getLeft()));
             System.out.println(String.format("Result Day15Part2 = %d", ctr15.getRight()));
+
+            String[] day16 = Util.readResourceLines("day16.txt");
+            var ctr16 = Day16.day16(day16);
+            System.out.println(String.format("Result Day16 = %d", ctr16.getLeft()));
+            System.out.println(String.format("Result Day16Part2 = %d", ctr16.getRight()));
         } catch (IOException e) {
             e.printStackTrace();
             return;
