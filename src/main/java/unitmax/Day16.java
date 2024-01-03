@@ -1,5 +1,6 @@
 package unitmax;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -58,6 +59,53 @@ public class Day16 {
 
         private Set<String> visitedDirections = new HashSet<>();
 
+        public long findBestConfiguration() {
+            long max = 0;
+            deenergizeAll();
+            // east + west
+            for (int i = 0; i < tiles.length; i++) {
+                // east
+                visitedDirections.clear();
+                propagateBeam(0, i, BeamDirection.EAST);
+                long enerCount = countEnergized();
+                if (enerCount > max) {
+                    max = enerCount;
+                }
+                deenergizeAll();
+
+                // west
+                visitedDirections.clear();
+                propagateBeam(tiles[0].length - 1, i, BeamDirection.WEST);
+                enerCount = countEnergized();
+                if (enerCount > max) {
+                    max = enerCount;
+                }
+                deenergizeAll();
+            }
+            // south
+            for (int i = 0; i < tiles[0].length; i++) {
+                // south
+                visitedDirections.clear();
+                propagateBeam(i, 0, BeamDirection.SOUTH);
+                long enerCount = countEnergized();
+                if (enerCount > max) {
+                    max = enerCount;
+                }
+                deenergizeAll();
+
+                // north
+                visitedDirections.clear();
+                propagateBeam(i, tiles.length - 1, BeamDirection.NORTH);
+                enerCount = countEnergized();
+                if (enerCount > max) {
+                    max = enerCount;
+                }
+                deenergizeAll();
+            }
+
+            return max;
+        }
+
         public void startPropagation() {
             propagateBeam(0, 0, BeamDirection.EAST);
         }
@@ -71,9 +119,6 @@ public class Day16 {
             int x = startX;
             int y = startY;
             BeamDirection beamDirection = startDirection;
-            // System.out.println("PROPAGATE_BEAM x=" + x + "/y=" + y + "/Direction=" +
-            // beamDirection + "/activeBeams="
-            // + nrOfActiveBeams);
             while (!(y < 0 || x < 0 || y >= this.tiles.length || x >= this.tiles[0].length)) {
                 var tile = this.tiles[y][x];
                 tile.energize();
@@ -244,18 +289,21 @@ public class Day16 {
             return ctr;
         }
 
+        public void deenergizeAll() {
+            for (int i = 0; i < tiles.length; i++) {
+                for (int j = 0; j < tiles[0].length; j++) {
+                    tiles[i][j].energized = false;
+                }
+            }
+        }
     }
 
     public static ImmutablePair<Long, Long> day16(String[] input) {
         // yeah I got uninspired with function names
-        long ctr1 = 0;
-        long ctr2 = 0;
         var contraption = new Contraption(input);
-        contraption.printContraption();
         contraption.startPropagation();
-        System.out.println("---");
-        contraption.printEnergized();
-        ctr1 = contraption.countEnergized();
+        long ctr1 = contraption.countEnergized();
+        long ctr2 = contraption.findBestConfiguration();
         return new ImmutablePair<Long, Long>(ctr1, ctr2);
     }
 
