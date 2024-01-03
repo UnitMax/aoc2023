@@ -103,7 +103,7 @@ public class App {
             System.out.println(String.format("Result Day16 = %d", ctr16.getLeft()));
             System.out.println(String.format("Result Day16Part2 = %d", ctr16.getRight()));
 
-            String[] day17 = Util.readResourceLines("day17test.txt");
+            String[] day17 = Util.readResourceLines("day17.txt");
             var ctr17 = Day17.shortestPath(day17);
             System.out.println(String.format("Result Day17 = %d", ctr17.getLeft()));
             System.out.println(String.format("Result Day17Part2 = %d", ctr17.getRight()));
