@@ -71,7 +71,7 @@ public class Day17 {
     }
 
     // Modified Dijkstra
-    public static long findShortestPath(String[] input) {
+    public static long findShortestPath(String[] input, boolean part2) {
         List<ImmutablePair<Integer, Integer>> directions = new ArrayList<>();
         directions.add(new ImmutablePair<Integer, Integer>(0, 1));
         directions.add(new ImmutablePair<Integer, Integer>(1, 0));
@@ -116,9 +116,16 @@ public class Day17 {
             return fuelComparison;
 
         });
-        cbpq.add(new CityBlock(0, 0, 0, 0, 0, 0));
+
+        if (part2) {
+            cbpq.add(new CityBlock(0, 0, 0, 1, 0, 0));
+            cbpq.add(new CityBlock(0, 0, 0, 0, 1, 0));
+        } else {
+            cbpq.add(new CityBlock(0, 0, 0, 0, 0, 0));
+        }
 
         Set<List<Integer>> seenBlocks = new HashSet<>();
+        int maximumSteps = part2 ? 10 : 3;
         while (!cbpq.isEmpty()) {
             var block = cbpq.poll();
 
@@ -134,13 +141,17 @@ public class Day17 {
             }
             seenBlocks.add(blockNoHeatLoss);
 
-            if (block.remainingSteps < 3 && !(block.directionRow == 0 && block.directionColumn == 0)) {
+            if (block.remainingSteps < maximumSteps && !(block.directionRow == 0 && block.directionColumn == 0)) {
                 var nextX = block.x + block.directionRow;
                 var nextY = block.y + block.directionColumn;
                 if (nextX >= 0 && nextX < city[0].length && nextY >= 0 && nextY < city.length) {
                     cbpq.add(new CityBlock(block.heatValue + city[nextY][nextX], nextX, nextY, block.directionRow,
                             block.directionColumn, block.remainingSteps + 1));
                 }
+            }
+
+            if (part2 && block.remainingSteps < 4) {
+                continue;
             }
 
             for (var direction : directions) {
@@ -161,8 +172,8 @@ public class Day17 {
     }
 
     public static ImmutablePair<Long, Long> shortestPath(String[] input) {
-        long ctr1 = findShortestPath(input);
-        long ctr2 = 0;
+        long ctr1 = findShortestPath(input, false);
+        long ctr2 = findShortestPath(input, true);
         return new ImmutablePair<Long, Long>(ctr1, ctr2);
     }
 
