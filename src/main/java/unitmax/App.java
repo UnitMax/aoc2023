@@ -107,6 +107,11 @@ public class App {
             var ctr17 = Day17.shortestPath(day17);
             System.out.println(String.format("Result Day17 = %d", ctr17.getLeft()));
             System.out.println(String.format("Result Day17Part2 = %d", ctr17.getRight()));
+
+            String[] day18 = Util.readResourceLines("day18test.txt");
+            var ctr18 = Day18.lavaVolume(day18);
+            System.out.println(String.format("Result Day18 = %d", ctr18.getLeft()));
+            System.out.println(String.format("Result Day18Part2 = %d", ctr18.getRight()));
         } catch (IOException e) {
             e.printStackTrace();
             return;
