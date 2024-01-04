@@ -1,9 +1,7 @@
 package unitmax;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
@@ -12,8 +10,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 public class Day18 {
-
-    static Pattern digPattern = Pattern.compile("([RDUL]) ([0-9]+) \\(");
 
     static class Coordinate {
         public int x;
@@ -49,7 +45,14 @@ public class Day18 {
             return true;
         }
 
+        @Override
+        public String toString() {
+            return "Coordinate [x=" + x + ", y=" + y + "]";
+        }
+
     }
+
+    static Pattern digPattern = Pattern.compile("([RDUL]) ([0-9]+) \\(");
 
     public static long part1(String[] input) {
         long result = 0;
@@ -64,7 +67,6 @@ public class Day18 {
             m.find();
             var direction = m.group(1).charAt(0);
             var dirCount = Integer.parseInt(m.group(2));
-            System.out.printf("Direction %s dirCount %d%n", direction, dirCount);
 
             var currentCoord = digStack.peek();
             for (int i = 1; i <= dirCount; i++) {
@@ -100,37 +102,78 @@ public class Day18 {
             }
         }
         var gridSize = new Coordinate(maxCoord.x - minCoord.x, maxCoord.y - minCoord.y);
-        System.out.println("Grid size = " + gridSize.x + " / " + gridSize.y);
         boolean[][] grid = new boolean[gridSize.y + 1][gridSize.x + 1];
         while (!digStack.isEmpty()) {
             var hole = digStack.pop();
             grid[hole.y + Math.abs(minCoord.y)][hole.x + Math.abs(minCoord.x)] = true;
         }
 
-        // Print grid
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid[0].length; j++) {
-                System.out.print(grid[i][j] ? '#' : '.');
-            }
-            System.out.println();
-        }
-
         // Flood fill
         var startingLocation = new Coordinate(grid[0].length / 2, grid.length / 2);
         floodFill(grid, startingLocation.x, startingLocation.y);
 
-        System.out.println("********");
-        // Print grid again
+        // Count
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[0].length; j++) {
-                System.out.print(grid[i][j] ? '#' : '.');
                 if (grid[i][j]) {
                     result++;
                 }
             }
-            System.out.println();
         }
+
         return result;
+    }
+
+    static Pattern digPatternHex = Pattern.compile("#([0-9a-f]{6})");
+
+    public static long part2(String[] input) {
+        // Get all edge points of the polygon
+        Stack<Coordinate> points = new Stack<>();
+        long boundaryPoints = 0;
+        points.push(new Coordinate(0, 0));
+        for (var s : input) {
+            var m = digPatternHex.matcher(s);
+            m.find();
+            var matchString = m.group(1);
+            var dirCount = Integer.parseInt(matchString.substring(0, 5), 16);
+            var directionNr = Integer.parseInt(String.valueOf(matchString.charAt(5)));
+            var direction = directionNr == 0 ? 'R' : directionNr == 1 ? 'D' : directionNr == 2 ? 'L' : 'U';
+
+            boundaryPoints += dirCount;
+            var currentCoord = points.peek();
+            switch (direction) {
+                case 'R':
+                    points.push(new Coordinate(currentCoord.x + dirCount, currentCoord.y));
+                    break;
+                case 'L':
+                    points.push(new Coordinate(currentCoord.x - dirCount, currentCoord.y));
+                    break;
+                case 'D':
+                    points.push(new Coordinate(currentCoord.x, currentCoord.y + dirCount));
+                    break;
+                case 'U':
+                    points.push(new Coordinate(currentCoord.x, currentCoord.y - dirCount));
+                    break;
+                default:
+                    throw new RuntimeException("How did we get here?");
+            }
+        }
+
+        // Shoelace formula
+        long area = 0;
+        for (int i = 0; i < points.size(); i++) {
+            var nextIndex = (i + 1) % points.size();
+            var prevIndex = (i - 1);
+            if (prevIndex < 0) {
+                prevIndex = points.size() - 1;
+            }
+            area += ((long) points.get(i).x * ((long) points.get(nextIndex).y - (long) points.get(prevIndex).y));
+        }
+        area /= 2;
+
+        // Pick's theorem
+        long innerArea = area - (boundaryPoints / 2) + 1;
+        return innerArea + boundaryPoints;
     }
 
     private static void floodFill(boolean[][] grid, int x, int y) {
@@ -160,7 +203,7 @@ public class Day18 {
 
     public static ImmutablePair<Long, Long> lavaVolume(String[] input) {
         long ctr1 = part1(input);
-        long ctr2 = 0;
+        long ctr2 = part2(input);
         return new ImmutablePair<Long, Long>(ctr1, ctr2);
     }
 
